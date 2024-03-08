@@ -1,0 +1,129 @@
+@import "@bhplugin/vue3-datatable/dist/style.css";
+
+.datatable > div {
+  @apply text-slate-800 dark:text-zink-50;
+}
+
+.datatable .bh-table-responsive {
+  @apply rounded-none;
+}
+
+input.datatable-input {
+  @apply rounded-md border border-[#e0e6ed] bg-white py-1.5 pl-2 pr-4 text-sm font-semibold text-slate-800 focus:border-zink-500 focus:ring-transparent dark:border-[#17263c] dark:bg-[#121e32] dark:dark:text-zink-50 dark:focus:border-zink-500;
+
+  &:focus {
+    @apply shadow-none border-custom-500;
+  }
+}
+
+.datatable .bh-pagination {
+  @apply font-medium;
+}
+
+.datatable .bh-pagination .bh-page-item {
+  @apply h-9 w-9 border-[#e0e6ed] bg-white text-slate-800 hover:bg-slate-200 hover:text-white dark:border-[#191e3a] dark:bg-[#191e3a] dark:text-zink-50 dark:hover:bg-zink-600 dark:hover:text-white;
+}
+
+.datatable .bh-pagination .bh-page-item.bh-active {
+  @apply bg-slate-200 text-white;
+}
+
+.datatable .bh-pagination .bh-page-item.bh-active {
+  @apply bg-slate-200 dark:text-white dark:bg-zink-600 dark:hover:bg-zink-700 dark:hover:text-white;
+}
+
+.datatable .bh-pagination select {
+  @apply rounded-md border border-[#e0e6ed] bg-white py-1.5 pl-2 pr-4 text-sm font-semibold text-black focus:border-[#e0e6ed] focus:ring-transparent dark:border-[#17263c] dark:bg-[#121e32] dark:text-zink-50 dark:focus:border-zink-500;
+}
+
+.datatable-tbody {
+  @apply bg-white dark:bg-zink-700;
+}
+
+.datatable-td {
+  @apply rounded border-[#e0e6ed] bg-transparent text-slate-800 dark:border-[#253b5c] dark:bg-zink-700;
+}
+
+.datatable-th {
+  @apply font-semibold text-slate-600 bg-slate-50 border-[#e0e6ed] dark:border-[#191e3a] dark:text-zink-100 dark:bg-zink-600;
+
+  &.datatable-th-sort {
+    &:hover,
+    &:focus {
+      @apply bg-slate-200 dark:bg-zink-200;
+    }
+  }
+
+  &.datatable-th-fixed {
+    @apply shadow-md;
+  }
+}
+
+.datatable-tr-selected {
+  @apply bg-slate-200 dark:bg-zink-600;
+}
+
+.datatable-th:first-child,
+.datatable-td:first-child {
+  border-left: 1px solid;
+  @apply border-[#e0e6ed] dark:border-[#191e3a];
+}
+
+.datatable-th:last-child,
+.datatable-td:last-child {
+  border-right: 1px solid;
+  @apply border-[#e0e6ed] dark:border-[#191e3a];
+}
+
+.datatable-wrapper {
+  @apply rounded border-[#e0e6ed] dark:border-[#191e3a];
+}
+
+.table-responsive {
+  @apply overflow-auto;
+}
+
+.bh-table-responsive {
+  @apply w-full border-collapse rounded-none;
+}
+
+.bh-table-responsive thead tr,
+.bh-table-responsive tfoot tr {
+  @apply border-b-0 bg-white dark:bg-zink-700;
+}
+
+.bh-table-responsive thead tr th,
+.bh-table-responsive tfoot tr th,
+.bh-table-responsive tbody tr td {
+  @apply py-3 px-4 ltr:text-left rtl:text-right border-[#e0e6ed] dark:border-[#191e3a];
+}
+
+.bh-table-responsive thead tr th,
+.bh-table-responsive tfoot tr th {
+  @apply font-semibold text-slate-600 bg-slate-50 border-[#e0e6ed] dark:border-[#191e3a] dark:text-zink-100 dark:bg-zink-600;
+}
+
+.bh-table-responsive tbody tr {
+  @apply border-b border-[#e0e6ed] dark:border-[#191e3a];
+}
+
+.bh-table-responsive .bh-table-hover tbody tr {
+  @apply hover:bg-slate-200 dark:hover:bg-zink-600;
+}
+
+.bh-table-responsive.table-striped tbody tr:nth-child(odd) {
+  @apply bg-slate-200 dark:bg-zink-600;
+}
+
+.bh-table-responsive.bh-table-responsive tbody tr th,
+.bh-table-responsive.bh-table-responsive tbody tr td {
+  @apply border-b border-[#e5e7eb] py-3 px-4 ltr:text-left rtl:text-right dark:border-[#191e3a];
+}
+
+.bh-table-responsive.bh-table-responsive tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+.bh-table-responsive table thead tr th div span svg polygon {
+  @apply text-zink-600 dark:text-zink-100;
+}
