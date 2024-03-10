@@ -2,12 +2,26 @@ import apiFetch from "@/plugins/axios";
 import { Provider } from "@/types/Provider";
 import { defineStore } from "pinia";
 
-const useProviderStore = defineStore("provider", {
+const useExcelStore = defineStore("excel", {
   state: () => ({
     loading: false,
     providers: [] as Provider[],
   }),
   actions: {
+    async getPaymentOrders() {
+        apiFetch.get("/get-excel", {responseType: 'blob'}).then((response) => {
+            // Create a new blob with the response data
+            const blob = new Blob([response.data], {
+              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            });
+        
+            // Create a link element, hide it, direct it towards the blob, and then 'click' it programatically
+            const link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.download = "orden-de-pago.xlsx";
+            link.click();
+          });
+    },
     async createProvider(data: any) {
       this.loading = true;
       return apiFetch
@@ -37,4 +51,4 @@ const useProviderStore = defineStore("provider", {
   },
 });
 
-export default useProviderStore;
+export default useExcelStore;

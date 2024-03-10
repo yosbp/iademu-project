@@ -2,41 +2,43 @@
 import { Plus, Search } from "lucide-vue-next";
 import DeleteDialog from "@/app/common/DeleteDialog.vue";
 import CreateEditDialog from "@/components/providers/CreateEditDialog.vue";
-import { ref } from "vue";
-
-const deleteDialog = ref(false);
-const createEditDialog = ref(false);
-
+import { onBeforeMount, ref, watchEffect } from "vue";
+import { useI18n, type I18n } from "vue-i18n";
 import Vue3Datatable from "@bhplugin/vue3-datatable";
+import useProviderStore from "@/store/providerStore";
+import useExcelStore from "@/store/excelStore";
+
+const { t } = useI18n<I18n>();
+const deleteDialog = ref(false);
+const isModalVisible = ref(false);
+const providerStore = useProviderStore();
+const excelStore = useExcelStore();
 
 const cols =
   ref([
-    { field: "id", title: "ID" },
-    { field: "name", title: "Name" },
-    { field: "description", title: "description" },
-    { field: "unit_number", title: "unit", sort: false },
-    { field: "action", title: "Action", sort: false },
+    { field: "name", title: t("name") },
+    { field: "address", title: t("address") },
+    { field: "rif", title: t("rif") },
+    { field: "phone", title: t("phone") },
+    { field: "actions", title: t("actions") },
   ]) || [];
 
-const rows = ref([
-  {
-    id: "1",
-    name: "Andrew Test",
-    description: "Test",
-    unit_number: "1",
-  },
-  {
-    id: "2",
-    name: "Andrew Test",
-    description: "Test",
-    unit_number: "1",
-  },
-]);
+const rows = ref();
 
 const search = ref("");
+
+watchEffect(() => {
+  rows.value = providerStore.providers;
+});
+
+onBeforeMount(() => {
+  providerStore.getProviders();
+});
+
 </script>
 
 <template>
+  <button @click="excelStore.getPaymentOrders">test</button>
   <div class="grid grid-cols-1 gap-x-5 xl:grid-cols-12">
     <div class="xl:col-span-12">
       <div class="card">
@@ -44,9 +46,9 @@ const search = ref("");
           <div class="flex items-center">
             <h6 class="text-15 grow text-2xl">{{ $t("providers") }}</h6>
             <div class="shrink-0">
-              <TButton @click="createEditDialog = true">
+              <TButton @click="isModalVisible = true">
                 <Plus class="inline-block size-4 me-1" />
-                Add User
+                {{ $t("add-provider") }}
               </TButton>
             </div>
           </div>
@@ -54,7 +56,7 @@ const search = ref("");
 
         <TCard>
           <div
-            class="grid grid-cols-1 gap-4 mb-5 lg:grid-cols-2 xl:grid-cols-12"
+            class="grid grid-cols-1 gap-4 mb-5 lg:grid-cols-2 xl:grid-cols-12 !py-3.5 border-y border-dashed border-slate-200 dark:border-zink-500"
           >
             <div class="xl:col-span-3">
               <div class="relative">
@@ -94,5 +96,5 @@ const search = ref("");
   </div>
 
   <DeleteDialog v-model="deleteDialog" />
-  <CreateEditDialog v-model="createEditDialog" />
+  <CreateEditDialog v-model:is-modal-visible="isModalVisible" />
 </template>

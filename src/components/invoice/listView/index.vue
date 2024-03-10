@@ -7,7 +7,7 @@ import {
   SlidersHorizontal,
   CalendarClock,
   Save,
-  MoreHorizontal
+  MoreHorizontal,
 } from "lucide-vue-next";
 import {
   InvoiceList,
@@ -15,7 +15,7 @@ import {
   addresses,
   table_dataHeader,
   table_data,
-  subtotal
+  subtotal,
 } from "@/components/invoice/listView/utils.ts";
 
 import DeleteDialog from "@/app/common/DeleteDialog.vue";
@@ -33,6 +33,15 @@ const onSelect = (data: any) => {
 </script>
 
 <template>
+  <router-link to="/invoice/add-new">
+    <TButton>
+      <Save class="inline-block size-4 ltr:mr-1 rtl:ml-1" /><span
+        class="align-middle"
+        >New Invoice</span
+      >
+    </TButton>
+  </router-link>
+
   <div class="grid grid-cols-1 gap-x-5 xl:grid-cols-12">
     <div class="xl:col-span-3">
       <div
@@ -81,7 +90,7 @@ const onSelect = (data: any) => {
                     'bg-slate-100 border-transparent text-slate-500 dark:bg-slate-500/20 dark:text-zink-200 dark:border-transparent':
                       item.status === 'Refund',
                     'bg-red-100 border-transparent text-red-500 dark:bg-red-500/20 dark:border-transparent':
-                      item.status === 'Cancel'
+                      item.status === 'Cancel',
                   }"
                 >
                   {{ item.status }}

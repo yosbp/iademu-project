@@ -1,3 +1,5 @@
+import { toast } from "vue3-toastify";
+
 export const setAttribute = (key: string, value: string) => {
   document.documentElement.setAttribute(key, value);
 };
@@ -66,5 +68,27 @@ export const getChartColorsArray = (colors: any) => {
     return mappedColors;
   } else {
     console.warn(`chart-colors attribute not found`);
+  }
+};
+
+export const toastNotification = (content: string, type: string) => {
+  if (type === 'success') {
+    toast.success(content, {
+      position: toast.POSITION.TOP_CENTER,
+      closeButton: false,
+      toastClassName: 'bg-green-500 text-white',
+      hideProgressBar: true,
+      icon: false,
+      autoClose: 1000,
+    });
+  } else if (type === 'error') {
+    toast.error(content, {
+      position: toast.POSITION.TOP_CENTER,
+      closeButton: false,
+      toastClassName: 'bg-red-500 text-white',
+      hideProgressBar: true,
+      icon: false,
+      autoClose: 1000,
+    });
   }
 };

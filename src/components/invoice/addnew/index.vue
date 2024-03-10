@@ -1,8 +1,25 @@
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
-import { Eye, Save, RefreshCcw, Download, Trash2, Plus } from "lucide-vue-next";
+import { ref, onMounted, onBeforeUnmount, watchEffect, computed } from "vue";
+import { Save, RefreshCcw, Download, Trash2, Plus } from "lucide-vue-next";
 import Choices from "choices.js";
+import useProviderStore from "@/store/providerStore";
+import Multiselect from "@vueform/multiselect";
 
+const providerStore = useProviderStore();
+const provider = ref();
+const mappedProviders = computed({
+  get: () => {
+    return providerStore.providers.map((provider: any) => {
+      return {
+        value: provider.id,
+        label: provider.name,
+      };
+    });
+  },
+  set: (value) => {
+    return value;
+  },
+});
 const items = ref<any>([]);
 const preparedData = {
   name: "",
@@ -13,9 +30,63 @@ const preparedData = {
   total: "",
   discountInput: "",
   description: "",
-  quantity: 0
+  quantity: 0,
 };
-for (let index = 0; index < 2; index++) {
+
+const paymentTypes = [
+  { value: "Transferencia", label: "Transferencia" },
+  { value: "Efectivo", label: "Efectivo" },
+  { value: "Cheque", label: "Cheque" },
+];
+
+const banks = [
+  { value: "Venezuela", label: "Venezuela" },
+  { value: "Banesco", label: "Banesco" },
+  { value: "Mercantil", label: "Mercantil" },
+  { value: "Provincial", label: "Provincial" },
+  { value: "Bicentenario", label: "Bicentenario" },
+  { value: "Banco de Venezuela", label: "Banco de Venezuela" },
+  { value: "Banco del Tesoro", label: "Banco del Tesoro" },
+  { value: "Banco Activo", label: "Banco Activo" },
+  { value: "Banco Plaza", label: "Banco Plaza" },
+  { value: "Banco Caroní", label: "Banco Caroní" },
+  { value: "Banco Exterior", label: "Banco Exterior" },
+  { value: "Banco Fondo Común", label: "Banco Fondo Común" },
+  { value: "Banco Bicentenario", label: "Banco Bicentenario" },
+  { value: "Banco de Comercio Exterior", label: "Banco de Comercio Exterior" },
+  { value: "Banco del Caribe", label: "Banco del Caribe" },
+  { value: "Banco del Sur", label: "Banco del Sur" },
+  { value: "Banco Sofitasa", label: "Banco Sofitasa" },
+  {
+    value: "Banco Occidental de Descuento",
+    label: "Banco Occidental de Descuento",
+  },
+  { value: "Banco Nacional de Crédito", label: "Banco Nacional de Crédito" },
+  {
+    value: "Banco Industrial de Venezuela",
+    label: "Banco Industrial de Venezuela",
+  },
+  {
+    value: "Banco Agrícola de Venezuela",
+    label: "Banco Agrícola de Venezuela",
+  },
+  {
+    value: "Banco de la Fuerza Armada Nacional Bolivariana",
+    label: "Banco de la Fuerza Armada Nacional Bolivariana",
+  },
+  { value: "Banco del Pueblo Soberano", label: "Banco del Pueblo Soberano" },
+];
+
+const paymentForm = ref({
+  payment_type: "",
+  reference: "",
+  bank: "",
+  account: "",
+  order_date: "",
+  order_number: "",
+});
+
+for (let index = 0; index < 1; index++) {
   items.value.push({ ...preparedData });
 }
 
@@ -27,34 +98,15 @@ const deleteItem = (index: number) => {
   items.value.splice(index, 1);
 };
 
-const paymentStatus = ref<any>(null);
-const paymentMethodVal = ref<any>(null);
+watchEffect(() => {});
 
 onMounted(() => {
-  const paymentStatusEle: any = document.querySelector("#paymentStatus");
-  if (paymentStatusEle) {
-    paymentStatus.value = new Choices(paymentStatusEle, {
-      searchEnabled: false,
-      allowHTML: true
-    });
-  }
-
-  const paymentMethodEle: any = document.querySelector("#paymentMethod");
-  if (paymentMethodEle) {
-    paymentMethodVal.value = new Choices(paymentMethodEle, {
-      searchEnabled: false,
-      allowHTML: true
-    });
-  }
-});
-
-onBeforeUnmount(() => {
-  paymentStatus.value.destroy();
-  paymentMethodVal.value.destroy();
+  providerStore.getProviders();
 });
 </script>
 
 <template>
+  <pre>{{ items }}</pre>
   <div
     class="group-data-[sidebar-size=sm]:min-h-sm group-data-[sidebar-size=sm]:relative"
   >
@@ -63,117 +115,126 @@ onBeforeUnmount(() => {
         class="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto"
       >
         <div class="grid items-center grid-cols-1 gap-5 mb-5 xl:grid-cols-12">
-          <div class="xl:col-span-2">
+          <div>
             <h5 class="text-16">New Invoice</h5>
-          </div>
-          <div class="xl:col-span-3 xl:col-start-10">
-            <div class="flex justify-end gap-2">
-              <TButton class="!inline-block" variant="ghost" color="light">
-                <Eye class="inline-block size-4 mr-1" />
-                <span class="align-middle ms-1">Preview</span>
-              </TButton>
-
-              <TButton variant="slate" color="purple">Save Draft</TButton>
-
-              <TButton variant="slate">
-                <Save class="inline-block size-4 mr-1" /><span
-                  class="align-middle ms-1"
-                  >Save & Download</span
-                >
-              </TButton>
-            </div>
           </div>
         </div>
 
         <TCard>
-          <form action="#!">
-            <h6 class="mb-4 text-gray-800 underline text-16 dark:text-zink-50">
-              Generale Info:
+          <!-- Provider -->
+          <h6 class="mb-4 text-gray-800 underline text-16 dark:text-zink-50">
+            Proveedor:
+          </h6>
+
+          <div class="mb-5">
+            <label class="inline-block mb-2 text-base font-medium"
+              >Proveedor</label
+            >
+            <div class="multiselect-wrapper">
+              <Multiselect
+                :loading="providerStore.loading"
+                :disabled="provider ? true : false"
+                v-model="provider"
+                :options="mappedProviders"
+              />
+            </div>
+          </div>
+          <form v-if="provider" action="#!">
+            <!-- Payment Order -->
+            <h6 class="my-5 text-gray-800 underline text-16 dark:text-zink-50">
+              Orden de Pago:
             </h6>
             <div class="grid grid-cols-1 gap-5 xl:grid-cols-12">
               <div class="xl:col-span-3">
-                <TInputField
-                  label="Invoice No."
-                  type="text"
-                  id="invoiceID"
-                  placeholder="#TW15090251"
-                  disabled
-                  required
-                  hide-details
-                />
-              </div>
-
-              <div class="xl:col-span-3">
-                <TFlatPicker
-                  label="Invoice Date"
-                  placeholder="Invoice Date"
-                  hide-details
-                />
-              </div>
-
-              <div class="xl:col-span-3">
-                <TFlatPicker label="Invoice Due" hide-details readonly />
-              </div>
-
-              <div class="xl:col-span-3">
-                <TInputField
-                  label="Legal Registration No."
-                  type="number"
-                  id="legalRegistrationNo"
-                  placeholder="Legal Registration No"
-                  hide-details
-                />
-              </div>
-
-              <div class="xl:col-span-3">
-                <TInputField
-                  label="Email"
-                  type="email"
-                  id="emailInvoiceInput"
-                  placeholder="tailwick@themesdesign.com"
-                  hide-details
-                />
-              </div>
-
-              <div class="xl:col-span-3">
-                <TInputField
-                  label="Website"
-                  type="text"
-                  id="websiteInput"
-                  placeholder="www.themesdesign.in"
-                  hide-details
-                  required
-                />
-              </div>
-
-              <div class="xl:col-span-3">
-                <TInputField
-                  label="Contact US"
-                  type="number"
-                  id="contactInput"
-                  placeholder="(241) 1234 567 8900"
-                  hide-details
-                  required
-                />
-              </div>
-
-              <div class="xl:col-span-3">
-                <label
-                  for="paymentStatus"
-                  class="inline-block mb-2 text-base font-medium"
-                  >Payment Status</label
+                <label class="inline-block mb-2 text-base font-medium"
+                  >Tipo de Pago</label
                 >
-                <select
-                  class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-                  name="paymentStatus"
-                  id="paymentStatus"
+                <TMultiSelect
+                  v-model="paymentForm.payment_type"
+                  placeholder="Select Method"
+                  :options="paymentTypes"
+                  required
+                />
+              </div>
+
+              <div class="xl:col-span-3">
+                <TInputField
+                  v-model="paymentForm.reference"
+                  label="Referencia"
+                  type="number"
+                  placeholder="Ingrese el número de referencia"
+                  hide-details
+                />
+              </div>
+
+              <div class="xl:col-span-3">
+                <TInputField
+                  v-model="paymentForm.account"
+                  label="Cuenta"
+                  placeholder="Ingrese el número de cuenta"
+                  hide-details
+                />
+              </div>
+
+              <div class="xl:col-span-3">
+                <label class="inline-block mb-2 text-base font-medium"
+                  >Banco</label
                 >
-                  <option selected>Select Status</option>
-                  <option value="Paid">Paid</option>
-                  <option value="Unpaid">Unpaid</option>
-                  <option value="Cancel">Cancel</option>
-                  <option value="Refund">Refund</option>
-                </select>
+                <TMultiSelect
+                  v-model="paymentForm.bank"
+                  placeholder="Select Method"
+                  :options="banks"
+                  required
+                />
+              </div>
+            </div>
+
+            <!-- Buy Order -->
+            <!--             <h6 class="my-5 text-gray-800 underline text-16 dark:text-zink-50">
+              Orden de Compra:
+            </h6>
+            <div class="grid grid-cols-1 gap-5 xl:grid-cols-12">
+              <div class="xl:col-span-3">
+                <label class="inline-block mb-2 text-base font-medium"
+                  >Tipo de Pago</label
+                >
+                <TMultiSelect
+                  v-model="paymentForm.payment_type"
+                  placeholder="Select Method"
+                  :options="paymentTypes"
+                  required
+                />
+              </div>
+
+              <div class="xl:col-span-3">
+                <TInputField
+                  v-model="paymentForm.reference"
+                  label="Referencia"
+                  type="number"
+                  placeholder="Ingrese el número de referencia"
+                  hide-details
+                />
+              </div>
+
+              <div class="xl:col-span-3">
+                <TInputField
+                  v-model="paymentForm.account"
+                  label="Cuenta"
+                  placeholder="Ingrese el número de cuenta"
+                  hide-details
+                />
+              </div>
+
+              <div class="xl:col-span-3">
+                <label class="inline-block mb-2 text-base font-medium"
+                  >Banco</label
+                >
+                <TMultiSelect
+                  v-model="paymentForm.bank"
+                  placeholder="Select Method"
+                  :options="banks"
+                  required
+                />
               </div>
             </div>
 
@@ -273,7 +334,7 @@ onBeforeUnmount(() => {
                 >
                 </TTextarea>
               </div>
-            </div>
+            </div> -->
 
             <h6 class="my-5 underline text-16">Products Info:</h6>
 
@@ -282,29 +343,20 @@ onBeforeUnmount(() => {
                 <thead>
                   <tr>
                     <th
-                      class="px-3.5 py-2.5 font-medium text-sm text-slate-500 uppercase border border-slate-200 dark:text-zink-200 dark:border-zink-500"
+                      class="px-3.5 py-2.5 font-medium text-sm text-slate-500 uppercase border border-slate-200 dark:text-zink-200 dark:border-zink-500 min-w-[400px]"
+                      colspan="3"
                     >
-                      Item Name
+                      Nombre del Producto
                     </th>
                     <th
                       class="px-3.5 py-2.5 font-medium text-sm text-slate-500 uppercase border border-slate-200 dark:text-zink-200 dark:border-zink-500"
                     >
-                      Quantity
+                      Cantidad
                     </th>
                     <th
                       class="px-3.5 py-2.5 font-medium text-sm text-slate-500 uppercase border border-slate-200 dark:text-zink-200 dark:border-zink-500"
                     >
-                      Price
-                    </th>
-                    <th
-                      class="px-3.5 py-2.5 font-medium text-sm text-slate-500 uppercase border border-slate-200 dark:text-zink-200 dark:border-zink-500"
-                    >
-                      Discount
-                    </th>
-                    <th
-                      class="px-3.5 py-2.5 font-medium text-sm text-slate-500 uppercase border border-slate-200 dark:text-zink-200 dark:border-zink-500"
-                    >
-                      TAX
+                      Precio
                     </th>
                     <th
                       class="px-3.5 py-2.5 font-medium text-sm text-slate-500 uppercase border border-slate-200 dark:text-zink-200 dark:border-zink-500 w-44"
@@ -319,7 +371,10 @@ onBeforeUnmount(() => {
                   class="before:block before:h-3 item-list"
                 >
                   <tr class="item">
-                    <td class="border border-slate-200 dark:border-zink-500">
+                    <td
+                      class="border border-slate-200 dark:border-zink-500 min-w-[400px]"
+                      colspan="3"
+                    >
                       <TInputField
                         v-model="item.name"
                         placeholder="Item Name"
@@ -331,7 +386,7 @@ onBeforeUnmount(() => {
                     <td
                       class="w-40 border border-slate-200 dark:border-zink-500"
                     >
-                      <div class="flex justify-center text-center input-step">
+                      <div class="flex justify-center text-center input-step my-3">
                         <TNumberInputSpinner
                           group
                           color="custom"
@@ -346,38 +401,15 @@ onBeforeUnmount(() => {
                     >
                       <TInputField
                         :border="false"
+                        type="number"
+                        step="0.01"
                         v-model="item.price"
                         placeholder="$00.00"
                         required
                         hide-details
                       />
                     </td>
-                    <td
-                      class="w-40 border border-slate-200 dark:border-zink-500"
-                    >
-                      <TInputField
-                        :border="false"
-                        v-model="item.discount"
-                        placeholder="0%"
-                        required
-                        hide-details
-                      />
-                    </td>
-                    <td
-                      class="w-40 border border-slate-200 dark:border-zink-500"
-                    >
-                      <TInputField
-                        :border="false"
-                        v-model="item.text"
-                        placeholder="0%"
-                        required
-                        hide-details
-                      />
-                    </td>
-                    <td
-                      class="border border-slate-200 dark:border-zink-500"
-                      rowspan="2"
-                    >
+                    <td class="border border-slate-200 dark:border-zink-500">
                       <div>
                         <TInputField
                           :border="false"
@@ -387,45 +419,17 @@ onBeforeUnmount(() => {
                           hide-details
                         />
                       </div>
-                      <TInputField
-                        :border="false"
-                        hide-details
-                        v-model="item.discountInput"
-                        placeholder="-$00.00"
-                        readonly
-                      />
                     </td>
                   </tr>
-                  <tr>
-                    <td class="border border-slate-200 dark:border-zink-500">
-                      <TInputField
-                        hide-details
-                        :border="false"
-                        v-model="item.description"
-                        placeholder="Enter Description (Optional)"
-                        required
-                      />
-                    </td>
-                    <td
-                      class="border border-slate-200 px-3.5 py-1.5 text-center dark:border-zink-500 flex justify-center"
-                    >
-                      <TButton
+                  <TButton
                         variant="soft"
                         color="red"
-                        classes="px-2 py-1.5 text-xs"
+                        classes="px-2 py-1.5 text-xs mt-2"
                         @click="deleteItem(index)"
                       >
-                        <Trash2
-                          class="inline-block size-3 mr-1 align-middle"
-                        />
+                        <Trash2 class="inline-block size-3 mr-1 align-middle" />
                         Delete
                       </TButton>
-                    </td>
-                    <td
-                      colspan="3"
-                      class="border border-slate-200 dark:border-zink-500"
-                    ></td>
-                  </tr>
                 </tbody>
 
                 <tbody class="before:block before:h-4" id="invoiceTable">
@@ -539,75 +543,6 @@ onBeforeUnmount(() => {
                   </tr>
                 </tbody>
               </table>
-            </div>
-
-            <h6 class="my-5 underline text-16">Payments Details:</h6>
-            <div class="grid grid-cols-1 gap-5 xl:grid-cols-12">
-              <div class="xl:col-span-3">
-                <label
-                  for="paymentMethod"
-                  class="inline-block mb-2 text-base font-medium"
-                  >Full Name</label
-                >
-                <select
-                  class="form-input border-slate-300 focus:outline-none focus:border-custom-500"
-                  data-choices
-                  data-choices-search-false
-                  name="paymentMethod"
-                  id="paymentMethod"
-                >
-                  <option value="">Select Method</option>
-                  <option value="Credit Card">Credit Card</option>
-                  <option value="Paypal">Paypal</option>
-                  <option value="Paypal">Paypal</option>
-                  <option value="American Express">American Express</option>
-                </select>
-                <!-- <Multiselect
-                  placeholder="Select Method"
-                  :options="paymentMethod"
-                /> -->
-              </div>
-
-              <div class="xl:col-span-3">
-                <TInputField
-                  label="Card Holder Name"
-                  id="cardHolderName"
-                  inputmode="numeric"
-                  pattern="[0-9\s]{13,19}"
-                  autocomplete="cc-number"
-                  maxlength="19"
-                  placeholder="Full Name"
-                  required
-                  hide-details
-                />
-              </div>
-              <div class="xl:col-span-3">
-                <TInputField
-                  label="Card Number"
-                  type="text"
-                  id="cardNumber"
-                  placeholder="xxxx xxxx xxxx xxxx"
-                  required
-                  hide-details
-                />
-              </div>
-              <div class="xl:col-span-3">
-                <TInputField
-                  label="Total Payment"
-                  id="totalPayment"
-                  placeholder="$00.00"
-                  required
-                  hide-details
-                />
-              </div>
-              <div class="xl:col-span-12">
-                <TTextarea
-                  label="Notes"
-                  placeholder="Enter notes pertaining to the customer or payment"
-                  id="taxBillingInput"
-                  :rows="3"
-                ></TTextarea>
-              </div>
             </div>
 
             <div class="flex justify-end gap-2 mt-5">

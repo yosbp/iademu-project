@@ -102,7 +102,6 @@ const getBorderClass = computed(() => {
         :required="required"
         :readonly="readonly"
         :disabled="disabled"
-        
       />
       <span
         class="absolute flex items-center h-full top-0 rtl:left-3 ltr:right-3 px-3 text-slate-500 dark:text-zink-200"

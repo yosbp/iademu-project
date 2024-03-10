@@ -6,28 +6,32 @@ const emit = defineEmits(["update:modelValue"]);
 const props = defineProps({
   modelValue: {
     type: [String, Array] as PropType<string | string[]>,
-    default: ""
+    default: "",
   },
   options: {
     type: Array as PropType<{ value: string; label: string }[]>,
-    default: () => []
+    default: () => [],
   },
   mode: {
     type: String as PropType<"tags" | "multiple" | "single" | undefined>,
-    default: "single"
+    default: "single",
   },
   multiple: {
     type: Boolean,
-    default: false
+    default: false,
   },
   searchable: {
     type: Boolean,
-    default: false
+    default: false,
   },
   groups: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 const selectedValue = computed({
   get() {
@@ -35,13 +39,15 @@ const selectedValue = computed({
   },
   set(newVal: string | string[]) {
     emit("update:modelValue", newVal);
-  }
+  },
 });
 </script>
 <template>
   <div class="multiselect-wrapper">
     <Multiselect
+      :disabled="disabled"
       v-model="selectedValue"
+      :placeholder="$t('select-option')"
       :options="options"
       :mode="mode"
       :multiple="multiple"

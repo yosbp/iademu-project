@@ -60,5 +60,15 @@
   "enter-email" : "Introduce tu correo electrónico",
   "already-have-an-account" : "¿Ya tienes una cuenta?",
   "loading" : "Cargando",
-  "providers" : "Proveedores"
+  "providers" : "Proveedores",
+  "add-provider" : "Añadir proveedor",
+  "rif" : "RIF",
+  "enter-rif" : "Introduce el RIF",
+  "sign-out" : "Cerrar sesión",
+  "address" : "Dirección",
+  "enter-address" : "Introduce la dirección",
+  "phone" : "Teléfono",
+  "enter-phone" : "Introduce el teléfono",
+  "actions" : "Acciones",
+  "select-option" : "Seleccionar opción"
 }
