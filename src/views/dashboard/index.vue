@@ -2,6 +2,6 @@
 import Dashboard from "@/components/dashboard/index.vue"
 </script>
 <template>
-    <PageHeader title="Dashboard" :items="['Dashboards', 'HR']" />
+    <PageHeader title="Panel" />
     <Dashboard />
 </template>

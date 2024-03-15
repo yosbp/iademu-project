@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { ChevronsLeft, ChevronsRight } from "lucide-vue-next";
-import { logoDark, logoLight, logoSm } from "@/assets/images/utils";
+import { iademuLogo } from "@/assets/images/utils";
 import SiteMode from "@/app/layout/navbar/SiteMode.vue";
-import Notification from "@/app/layout/navbar/Notification.vue";
-import Settings from "@/app/layout/navbar/Settings.vue";
 import Profile from "@/app/layout/navbar/Profile.vue";
 import CustomizerDrawer from "@/app/layout/navbar/customizer/Drawer.vue";
 import { useLayoutStore } from "@/store/layout";
@@ -40,10 +38,6 @@ const onWindowResize = () => {
 
     layoutStore.value.changeSideBarSize(DEFAULT);
   }
-};
-
-const toggleCustomizerDrawer = () => {
-  customizerDrawer.value = !customizerDrawer.value;
 };
 
 watch(isVisible, (newVal: boolean) => {
@@ -105,12 +99,12 @@ const onOverlayClick = () => {
           >
             <router-link to="/">
               <span class="hidden">
-                <img :src="logoSm" alt="" class="h-6 mx-auto" />
+                <img :src="iademuLogo" alt="" class="h-6 mx-auto" />
               </span>
               <span
                 class="group-data-[topbar=dark]:hidden group-data-[topbar=brand]:hidden"
               >
-                <img :src="logoDark" alt="" class="h-6 mx-auto" />
+                <img :src="iademuLogo" alt="" class="h-6 mx-auto" />
               </span>
             </router-link>
             <router-link
@@ -120,12 +114,12 @@ const onOverlayClick = () => {
               <span
                 class="group-data-[topbar=dark]:hidden group-data-[topbar=brand]:hidden"
               >
-                <img :src="logoSm" alt="" class="h-6 mx-auto" />
+                <img :src="iademuLogo" alt="" class="h-6 mx-auto" />
               </span>
               <span
                 class="group-data-[topbar=dark]:block group-data-[topbar=brand]:block"
               >
-                <img :src="logoLight" alt="" class="h-6 mx-auto" />
+                <img :src="iademuLogo" alt="" class="h-6 mx-auto" />
               </span>
             </router-link>
           </div>
@@ -147,12 +141,6 @@ const onOverlayClick = () => {
           <div class="flex gap-3 ms-auto">
             <!-- Site Mode -->
             <SiteMode />
-            <!-- Notification -->
-            <Notification />
-            <!-- Settings -->
-            <div class="relative items-center hidden h-header md:flex">
-              <Settings @toggleDrawer="toggleCustomizerDrawer" />
-            </div>
             <!-- Profile -->
             <Profile />
           </div>

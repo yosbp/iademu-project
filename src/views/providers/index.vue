@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import ListView from "@/components/providers/list/index.vue";
+import ListView from "@/components/providers/list.vue";
 </script>
 <template>
-  <PageHeader title="List View" :items="['Providers', 'List View']" />
+  <PageHeader :title="$t('provider-list')" />
   <ListView />
 </template>

@@ -1,22 +1,22 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { X } from "lucide-vue-next";
 import useProviderStore from "@/store/providerStore";
-import { useRouter } from "vue-router";
 import { toastNotification } from "@/app/utils";
+import { Provider } from "@/types/Provider";
 
 interface Emits {
   (e: "update:isModalVisible", value: Boolean): void;
-  (e: "getDirectors"): void;
+  (e: "getProviders"): void;
 }
 interface Props {
   isModalVisible: Boolean;
+  provider?: Provider;
 }
 
 const props = withDefaults(defineProps<Props>(), {});
 const emit = defineEmits<Emits>();
 const providerStore = useProviderStore();
-const router = useRouter();
 
 const showModal = computed({
   get() {
@@ -29,15 +29,34 @@ const showModal = computed({
 
 const form = ref({
   name: { value: "", isValid: false },
-  address: { value: "", isValid: false },
-  rif: { value: "", isValid: false },
-  phone: { value: "", isValid: false },
+  address: { value: props.provider?.address ?? "", isValid: false },
+  rif: { value: props.provider?.rif ?? "", isValid: false },
+  phone: { value: props.provider?.phone ?? "", isValid: false },
 });
 const isSubmitted = ref(false);
 
 const isValidForm = computed(() => {
   const { name, address, rif, phone } = form.value;
   return name.isValid && address.isValid && rif.isValid && phone.isValid;
+});
+
+watchEffect(() => {
+  if (props.provider) {
+    const { name, address, rif, phone } = props.provider;
+    form.value = {
+      name: { value: name, isValid: true },
+      address: { value: address, isValid: true },
+      rif: { value: rif, isValid: true },
+      phone: { value: phone, isValid: true },
+    };
+  } else {
+    form.value = {
+      name: { value: "", isValid: false },
+      address: { value: "", isValid: false },
+      rif: { value: "", isValid: false },
+      phone: { value: "", isValid: false },
+    };
+  }
 });
 
 const handleSubmit = async () => {
@@ -51,12 +70,21 @@ const handleSubmit = async () => {
         rif: rif.value,
         phone: phone.value,
       };
-      await providerStore.createProvider(data).then(() => {
-        toastNotification("Proveedor creado con éxito", "success");
-        emit("update:isModalVisible", false);
-      });
+      if (props.provider) {
+        await providerStore.updateProvider(props.provider.id, data).then(() => {
+          toastNotification("Proveedor actualizado con éxito", "success");
+          emit("update:isModalVisible", false);
+          emit("getProviders");
+        });
+      } else {
+        await providerStore.createProvider(data).then(() => {
+          toastNotification("Proveedor creado con éxito", "success");
+          emit("update:isModalVisible", false);
+          emit("getProviders");
+        });
+      }
     } catch (error) {
-      toastNotification("Error al crear el proveedor", "error");
+      toastNotification("Error al guardar el proveedor", "error");
     }
   }
 };
@@ -67,7 +95,9 @@ const handleSubmit = async () => {
       <div
         class="flex items-center justify-between p-4 border-b dark:border-zink-300/20"
       >
-        <h5 class="text-16">{{ $t("add-provider") }}</h5>
+        <h5 class="text-16">
+          {{ props.provider ? $t("edit-provider") : $t("add-provider") }}
+        </h5>
         <button
           class="transition-all duration-200 ease-linear text-slate-400 hover:text-red-500"
           @click="showModal = false"
@@ -101,7 +131,6 @@ const handleSubmit = async () => {
         />
         <TValidationInputField
           v-model="form.phone"
-          type="number"
           :label="$t('phone')"
           :rules="['required']"
           :submit="isSubmitted"
@@ -114,9 +143,11 @@ const handleSubmit = async () => {
             variant="ghost"
             @click="showModal = false"
           >
-            Cancel
+            {{ $t("cancel") }}
           </TButton>
-          <TButton type="submit" @click="handleSubmit"> Add User </TButton>
+          <TButton type="submit" @click="handleSubmit">
+            {{ props.provider ? $t("update") : $t("add") }}
+          </TButton>
         </div>
       </simplebar>
     </template>

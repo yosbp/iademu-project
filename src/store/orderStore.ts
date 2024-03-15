@@ -1,17 +1,17 @@
 import apiFetch from "@/plugins/axios";
-import { Provider } from "@/types/Provider";
+import { Order } from "@/types/Order";
 import { defineStore } from "pinia";
 
-const useProviderStore = defineStore("provider", {
+const useOrderStore = defineStore("order", {
   state: () => ({
     loading: false,
-    providers: [] as Provider[],
+    orders: [] as Order[],
   }),
   actions: {
-    async createProvider(data: any) {
+    async createOrder(data: any) {
       this.loading = true;
       return apiFetch
-        .post("/providers", data)
+        .post("/orders", data)
         .then((response) => {
           this.loading = false;
           return response;
@@ -21,26 +21,26 @@ const useProviderStore = defineStore("provider", {
           throw error;
         });
     },
-    async updateProvider(id: any, data: any) {
+    async getOrders() {
       this.loading = true;
       return apiFetch
-        .put(`/providers/${id}`, data)
+        .get("/orders")
         .then((response) => {
           this.loading = false;
-          return response;
+          this.orders = response.data;
         })
         .catch((error) => {
           this.loading = false;
           throw error;
         });
     },
-    async getProviders() {
+    async getOrder(id: string) {
       this.loading = true;
       return apiFetch
-        .get("/providers")
+        .get(`/orders/${id}`)
         .then((response) => {
           this.loading = false;
-          this.providers = response.data;
+          return response.data;
         })
         .catch((error) => {
           this.loading = false;
@@ -50,4 +50,4 @@ const useProviderStore = defineStore("provider", {
   },
 });
 
-export default useProviderStore;
+export default useOrderStore;

@@ -28,14 +28,14 @@ onMounted(() => {
       <div class="!px-10 !py-12 card-body">
         <a href="#!">
           <img
-            src="@/assets/images/logo-light.png"
+            src="@/assets/images/iademu.webp"
             alt=""
-            class="hidden h-6 mx-auto dark:block"
+            class="hidden h-20 mx-auto dark:block"
           />
           <img
-            src="@/assets/images/logo-dark.png"
+            src="@/assets/images/iademu.webp"
             alt=""
-            class="block h-6 mx-auto dark:hidden"
+            class="block h-20 mx-auto dark:hidden"
           />
         </a>
 

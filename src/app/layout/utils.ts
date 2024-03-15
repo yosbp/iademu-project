@@ -9,20 +9,11 @@ export const menuItems: MenuItemType[] = [
     title: "dashboard",
     path: "/",
   },
-  { isHeader: true, title: "invoices" },
+  { isHeader: true, title: "orders" },
   {
     icon: FileText,
-    title: "invoices",
-    path: "/invoices",
-  },
-  {
-    title: "invoices",
-    icon: FileText,
-    subMenu: [
-      { path: "/invoice/list", title: "list-view" },
-      { path: "/invoice/add-new", title: "add-new" },
-      { path: "/invoice/overview", title: "overview" },
-    ],
+    title: "orders",
+    path: "/orders",
   },
   { isHeader: true, title: "providers" },
   {

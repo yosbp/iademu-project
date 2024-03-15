@@ -8,44 +8,40 @@ const useExcelStore = defineStore("excel", {
     providers: [] as Provider[],
   }),
   actions: {
-    async getPaymentOrders() {
-        apiFetch.get("/get-excel", {responseType: 'blob'}).then((response) => {
-            // Create a new blob with the response data
-            const blob = new Blob([response.data], {
-              type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            });
-        
-            // Create a link element, hide it, direct it towards the blob, and then 'click' it programatically
-            const link = document.createElement("a");
-            link.href = window.URL.createObjectURL(blob);
-            link.download = "orden-de-pago.xlsx";
-            link.click();
-          });
-    },
-    async createProvider(data: any) {
+    async getPaymentOrder(id: string) {
       this.loading = true;
-      return apiFetch
-        .post("/providers", data)
+      apiFetch
+        .get(`/payment-order/${id}`, { responseType: "blob" })
         .then((response) => {
           this.loading = false;
-          return response;
-        })
-        .catch((error) => {
-          this.loading = false;
-          throw error;
+          // Create a new blob with the response data
+          const blob = new Blob([response.data], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+
+          // Create a link element, hide it, direct it towards the blob, and then 'click' it programatically
+          const link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = "orden-de-pago.xlsx";
+          link.click();
         });
     },
-    async getProviders() {
+    async getBuyOrder(id: string) {
       this.loading = true;
-      return apiFetch
-        .get("/providers")
+      apiFetch
+        .get(`/buy-order/${id}`, { responseType: "blob" })
         .then((response) => {
           this.loading = false;
-          this.providers = response.data;
-        })
-        .catch((error) => {
-          this.loading = false;
-          throw error;
+          // Create a new blob with the response data
+          const blob = new Blob([response.data], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+
+          // Create a link element, hide it, direct it towards the blob, and then 'click' it programatically
+          const link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = "1-orden-de-compra.xlsx";
+          link.click();
         });
     },
   },

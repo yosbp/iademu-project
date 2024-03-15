@@ -7,52 +7,42 @@ const CoverLayout = defineAsyncComponent(() => import("@/layouts/Cover.vue"));
 const dashboardRoutes = [
   {
     path: "/",
-    name: "HR",
+    name: "Panel",
     component: () => import("@/views/dashboard/index.vue"),
     meta: {
-      title: "HR",
+      title: "Panel",
       authRequired: true,
       layout: DefaultLayout,
     },
   },
 ];
-const invoiceRoutes = [
+const orderRoutes = [
   {
-    path: "/invoice/list",
-    name: "InvoiceList",
-    component: () => import("@/views/invoice/ListView.vue"),
+    path: "/order/add-new",
+    name: "AddOrder",
+    component: () => import("@/views/order/AddNew.vue"),
     meta: {
-      title: "List View",
+      title: "Añadir Orden",
       authRequired: true,
       layout: DefaultLayout,
     },
   },
   {
-    path: "/invoice/add-new",
-    name: "AddInvoice",
-    component: () => import("@/views/invoice/AddNew.vue"),
+    path: "/order/view/:id",
+    name: "ViewOrder",
+    component: () => import("@/views/order/View.vue"),
     meta: {
-      title: "Add New",
+      title: "Ordenes",
       authRequired: true,
       layout: DefaultLayout,
     },
   },
   {
-    path: "/invoice/overview",
-    name: "InvoiceOverview",
-    component: () => import("@/views/invoice/Overview.vue"),
+    path: "/orders",
+    name: "Orders",
+    component: () => import("@/views/order/index.vue"),
     meta: {
-      title: "Overview",
-      authRequired: true,
-      layout: DefaultLayout,
-    },
-  },
-  {
-    path: "/invoices",
-    name: "Invoices",
-    component: () => import("@/views/invoice/index.vue"),
-    meta: {
-      title: "Overview",
+      title: "Lista de Ordenes",
       authRequired: true,
       layout: DefaultLayout,
     },
@@ -107,8 +97,8 @@ const pagesRoutes = [
 
 export const routes = [
   ...dashboardRoutes,
-  ...invoiceRoutes,
   ...authRoutes,
   ...pagesRoutes,
-  ...providersRoutes,
+  ...providersRoutes,,
+  ...orderRoutes,
 ];
