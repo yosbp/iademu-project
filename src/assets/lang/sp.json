@@ -101,5 +101,8 @@
   "save" : "Guardar",
   "exempt" : "Exento",
   "tax" : "Impuesto",
-  "subtotal" : "Subtotal"
+  "subtotal" : "Subtotal",
+  "payment-order" : "Orden de Pago",
+  "payment-description" : "Descripción del Pago",
+  "products" : "Productos"
 }

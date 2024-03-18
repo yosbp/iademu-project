@@ -7,6 +7,7 @@ import { toastNotification } from "@/app/utils";
 import useOrderStore from "@/store/orderStore";
 import { banks, paymentTypes } from "./utils";
 import { useRouter } from "vue-router";
+import Textarea from "@/app/components/formFields/Textarea.vue";
 
 const router = useRouter();
 const providerStore = useProviderStore();
@@ -30,8 +31,10 @@ const preparedData = {
 const paymentForm = ref({
   payment_method: "",
   payment_reference: "",
+  payment_number: "",
   bank: "",
   account_number: "",
+  description: "",
 });
 const subtotal = computed(() => {
   return items.value.reduce((acc: any, item: any) => {
@@ -56,7 +59,7 @@ const amounts = ref({
 });
 
 const totalAmount = computed(() => {
-  return subtotal.value + amounts.value.tax + amounts.value.exempt;
+  return subtotal.value + amounts.value.tax - amounts.value.exempt;
 });
 
 const addItem = () => {
@@ -68,16 +71,24 @@ const deleteItem = (index: number) => {
 };
 
 const handleSubmit = async () => {
-  const { payment_method, payment_reference, bank, account_number } =
-    paymentForm.value;
+  const {
+    payment_method,
+    payment_reference,
+    bank,
+    account_number,
+    description,
+    payment_number,
+  } = paymentForm.value;
   const items = preparedItems.value;
   const { tax, exempt } = amounts.value;
   const data = {
     provider_id: provider.value,
     payment_method: payment_method,
     payment_reference: payment_reference,
+    payment_number: payment_number,
     bank: bank,
     account_number: account_number,
+    description: description,
     tax: tax,
     exempt: exempt,
     items: items,
@@ -173,10 +184,37 @@ onMounted(() => {
                   required
                 />
               </div>
+
+              <div class="xl:col-span-3">
+                <TInputField
+                  v-model="paymentForm.payment_number"
+                  label="Numero de Orden de Pago"
+                  placeholder="Ingrese el número de Pago"
+                  hide-details
+                />
+              </div>
+
+              <!--               <div class="xl:col-span-3">
+                <TInputField
+                  v-model="paymentForm.payment_number"
+                  label="Numero de Orden de Compra"
+                  placeholder="Ingrese el número de Compra"
+                  hide-details
+                />
+              </div> -->
+
+              <div class="xl:col-span-12">
+                <Textarea
+                  v-model="paymentForm.description"
+                  label="Descripción"
+                  placeholder="Ingrese una descripción"
+                  hide-details
+                />
+              </div>
             </div>
 
             <!-- Products Info -->
-            <h6 class="my-5 underline text-16">Products Info:</h6>
+            <h6 class="my-5 underline text-16">{{ $t("products") }}</h6>
 
             <div class="overflow-x-auto">
               <table class="w-full whitespace-nowrap">

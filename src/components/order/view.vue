@@ -6,6 +6,7 @@ import { FileEdit, MoreHorizontal } from "lucide-vue-next";
 import useOrderStore from "@/store/orderStore";
 import useExcelStore from "@/store/excelStore";
 import { Order } from "@/types/Order";
+import useWordStore from "@/store/wordStore";
 
 const { t } = useI18n<I18n>();
 const table_dataHeader = [
@@ -19,10 +20,17 @@ const route = useRoute();
 const orderStore = useOrderStore();
 const order = ref<Order>();
 const excelStore = useExcelStore();
+const wordStore = useWordStore();
 
 const tableAction = [
   { value: "paymentOrder", icon: FileEdit, title: "Crear Orden de Pago" },
   { value: "buyOrder", icon: FileEdit, title: "Crear Orden de Compra" },
+  {
+    value: "GoodsAndServices",
+    icon: FileEdit,
+    title: "Crear Bienes y Servicios Recibidos",
+  },
+  { value: "approveMemorandum", icon: FileEdit, title: "Aprobar Memorandum" },
 ];
 
 const onSelect = (data: any) => {
@@ -33,6 +41,14 @@ const onSelect = (data: any) => {
   } else if (data.value == "buyOrder") {
     if (order.value) {
       excelStore.getBuyOrder(order.value.id);
+    }
+  } else if (data.value == "GoodsAndServices") {
+    if (order.value) {
+      wordStore.getGoodsAndServices(order.value.id);
+    }
+  } else if (data.value == "approveMemorandum") {
+    if (order.value) {
+      wordStore.getApproveMemorandum(order.value.id);
     }
   } else if (data.title == "Delete") {
     console.log("delete");
@@ -67,15 +83,13 @@ onBeforeMount(() => {
               <div class="card-body print:hidden">
                 <div class="flex flex-col gap-5 md:items-center md:flex-row">
                   <div class="grow">
-                    <h6 class="mb-1 text-16">#{{ order.id }}</h6>
-                    <ul class="flex items-center gap-3">
-                      <li class="text-slate-500 dark:text-zink-200">
-                        Create: 10 July, 2023
-                      </li>
-                      <li class="text-slate-500 dark:text-zink-200">
-                        Due: 10 July, 2023
-                      </li>
-                    </ul>
+                    <h6 class="mb-1 text-16">
+                      {{
+                        `${$t("payment-order")} # ${
+                          order.payment_order.payment_number
+                        }`
+                      }}
+                    </h6>
                   </div>
 
                   <div class="flex items-center gap-2 shrink-0">
@@ -140,7 +154,9 @@ onBeforeMount(() => {
                     class="flex justify-around mt-6 text-center divide-y md:divide-y-0 md:divide-x rtl:divide-x-reverse divide-dashed divide-slate-200 dark:divide-zink-500"
                   >
                     <div class="p-3">
-                      <h6 class="mb-1">#TW15090254</h6>
+                      <h6 class="mb-1">
+                        {{ order.payment_order.payment_number }}
+                      </h6>
                       <p class="text-slate-500 dark:text-zink-200">
                         {{ $t("order-number") }}
                       </p>
@@ -188,6 +204,14 @@ onBeforeMount(() => {
                     <template #item_name="{ value }">
                       <h6 class="mb-1">{{ value.item_name }}</h6>
                     </template>
+
+                    <template #item_amount="{ value }">
+                      <h6 class="mb-1">{{ `${value.item_amount} Bs.` }}</h6>
+                    </template>
+
+                    <template #total_amount="{ value }">
+                      <h6 class="mb-1">{{ `${value.total_amount} Bs.` }}</h6>
+                    </template>
                   </TBasicTable>
 
                   <table class="w-full">
@@ -197,12 +221,12 @@ onBeforeMount(() => {
                         <td
                           class="border-b border-slate-200 px-3.5 py-2.5 text-slate-500 dark:border-zink-500 dark:text-zink-200"
                         >
-                          {{$t('subtotal')}}
+                          {{ $t("subtotal") }}
                         </td>
                         <th
                           class="border-b border-slate-200 px-3.5 py-2.5 text-slate-500 dark:border-zink-500 dark:text-zink-200"
                         >
-                          {{ order.subtotal }}
+                          {{ order.subtotal }} Bs.
                         </th>
                       </tr>
                       <tr>
@@ -210,12 +234,12 @@ onBeforeMount(() => {
                         <td
                           class="border-b border-slate-200 px-3.5 py-2.5 text-slate-500 dark:border-zink-500 dark:text-zink-200"
                         >
-                          {{$t('tax')}} (16%)
+                          {{ $t("tax") }} (16%)
                         </td>
                         <th
                           class="border-b border-slate-200 px-3.5 py-2.5 text-slate-500 dark:border-zink-500 dark:text-zink-200"
                         >
-                          {{ order.tax }}
+                          {{ order.tax }} Bs.
                         </th>
                       </tr>
                       <tr>
@@ -223,12 +247,12 @@ onBeforeMount(() => {
                         <td
                           class="border-b border-slate-200 px-3.5 py-2.5 text-slate-500 dark:border-zink-500 dark:text-zink-200"
                         >
-                          {{$t('exempt')}}
+                          {{ $t("exempt") }}
                         </td>
                         <th
                           class="border-b border-slate-200 px-3.5 py-2.5 text-slate-500 dark:border-zink-500 dark:text-zink-200"
                         >
-                          {{ order.exempt }}
+                          {{ order.exempt }} Bs.
                         </th>
                       </tr>
                       <tr>
@@ -236,16 +260,27 @@ onBeforeMount(() => {
                         <td
                           class="border-b border-slate-200 px-3.5 py-2.5 text-slate-500 dark:border-zink-500 dark:text-zink-200"
                         >
-                          {{$t('total-amount')}}
+                          {{ $t("total-amount") }} Bs.
                         </td>
                         <th
                           class="border-b border-slate-200 px-3.5 py-2.5 text-slate-500 dark:border-zink-500 dark:text-zink-200"
                         >
-                          {{ order.total }}
+                          {{ order.total }} Bs.
                         </th>
                       </tr>
                     </tbody>
                   </table>
+
+                  <div class="my-5">
+                    <p
+                      class="mb-2 text-sm uppercase text-slate-500 dark:text-zink-200 font-extrabold"
+                    >
+                      {{ $t("payment-description") }}
+                    </p>
+                    <p class="mb-1 text-slate-500 dark:text-zink-200">
+                      {{ order.payment_order.description }}
+                    </p>
+                  </div>
 
                   <div class="my-5">
                     <p
